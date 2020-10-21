@@ -59,7 +59,7 @@
     "zlib": "^1.0.5"
   },
   "dependencies": {
-    "cesium": "^1.71.0",
+    "cesium": "^1.74.0",
     "preact": "10.5.4",
     "preact-router": "^3.2.1"
   },
