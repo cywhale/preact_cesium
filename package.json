@@ -6,7 +6,7 @@
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
     "build": "cp config/template.html src/ && export NODE_ENV=production && export ENABLE_BROTLI=true && preact build --config config/preact.config.js --no-esm --sw --brotli true --template ./src/template.html",
-    "serve": "sirv build --cors --single --port 3000 --http2 --cert ./fullchain.pem --key ./privkey.pem",
+    "serve": "sirv build --cors --single --port 3000",
     "dev": "preact watch --config config/preact.config.js",
     "lint": "eslint src",
     "test": "jest",

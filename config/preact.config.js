@@ -28,7 +28,7 @@ const cesiumWorkers = "../Build/Cesium/Workers";
 const testenv = {NODE_ENV: process.env.NODE_ENV};
 // const paths = require("./paths");
 const publicPath= "./";
-const publicUrl = publicPath.slice(0, -1);
+//const publicUrl = publicPath.slice(0, -1);
 
 //const cssFilename = '[name].[contenthash:8].css'; //'static/css/'
 //const extractTextPluginOptions = { publicPath: Array(cssFilename.split('/').length).join('../') }
