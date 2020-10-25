@@ -7,7 +7,7 @@
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
     "build": "cp config/template.html src/ && export NODE_ENV=production && export ENABLE_BROTLI=true && preact build --config config/preact.config.js --no-esm --sw --brotli true --template ./src/template.html",
     "serve": "sirv build --cors --single --port 3000",
-    "dev": "preact watch --config config/preact.config.js",
+    "dev": "export PORT=3000 && preact watch --config config/preact.config.js",
     "lint": "eslint src",
     "test": "jest",
     "bundle_watch": "webpack-bundle-analyzer --port 4200 build/stats.json"
@@ -45,6 +45,7 @@
     "preact-render-spy": "^1.2.1",
     "progress-bar-webpack-plugin": "^2.1.0",
     "sass-loader": "^7.3.1",
+    "serve": "^11.3.2",
     "sirv-cli": "^0.4.5",
     "strip-pragma-loader": "^1.0.0",
     "style-loader": "^1.2.1",

@@ -3,6 +3,7 @@ import WebMercatorProjection from 'cesium/Source/Core/WebMercatorProjection';
 import { render, Fragment } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import BasemapPicker from 'async!./BasemapPicker';
+import Layer from 'async!../Layer';
 import style from './style';
 import 'cesium/Source/Widgets/widgets.css';
 
@@ -54,12 +55,22 @@ const Earth = (props, ref) => {
     return null;
   };
 
+  const render_layer = () => {
+    if (globe.loaded & globe.baseLoaded) {
+      return (
+        <Layer viewer={globe.viewer} baseName={basePick.name} userBase={userScene.baseLayer}/>
+      );
+    }
+    return null;
+  };
+
   return (
     <Fragment>
       <div id="cesiumContainer"
           ref = {ref}
           class={style.fullSize} />
       <div id="toolbar" class={style.toolbar} />
+      { render_layer() }
     </Fragment>
   );
 };
