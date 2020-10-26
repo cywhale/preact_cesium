@@ -2,8 +2,13 @@ import { useEffect, useState, useRef } from 'preact/hooks';
 import Color from 'cesium/Source/Core/Color.js';
 import DefaultProxy from 'cesium/Source/Core/DefaultProxy';
 import Rectangle from 'cesium/Source/Core/Rectangle';
+<<<<<<< Updated upstream
 import ImageryLayer from 'cesium/Source/Scene/ImageryLayer';
 import ImageryLayerCollection from 'cesium/Source/Scene/ImageryLayerCollection';
+=======
+//import ImageryLayer from 'cesium/Source/Scene/ImageryLayer';
+//import ImageryLayerCollection from 'cesium/Source/Scene/ImageryLayerCollection';
+>>>>>>> Stashed changes
 import SingleTileImageryProvider from 'cesium/Source/Scene/SingleTileImageryProvider';
 //import GridImageryProvider from 'cesium/Source/Scene/GridImageryProvider';
 //import WebMapServiceImageryProvider from 'cesium/Source/Scene/WebMapServiceImageryProvider';
@@ -183,12 +188,21 @@ const LayerModal = (props) => {
           activeLayer.alpha = 0;
           imageryLayers.remove(activeLayer, false);
           let nowLayer;
+<<<<<<< Updated upstream
           if (selLayer.constructor.name === "SingleTileImageryProvider") {
             nowLayer = imageryLayers.addImageryProvider(selLayer, nlayers - activeLayerIndex - 1);
           } else {
             imageryLayers.add(selLayer, nlayers - activeLayerIndex - 1);
             nowLayer = imageryLayers.get(activeLayerIndex);
           }
+=======
+          //if (selLayer.constructor.name === "SingleTileImageryProvider") {
+            nowLayer = imageryLayers.addImageryProvider(selLayer, nlayers - activeLayerIndex - 1);
+          //} else {
+          //  imageryLayers.add(selLayer, nlayers - activeLayerIndex - 1);
+            nowLayer = imageryLayers.get(activeLayerIndex);
+          //}
+>>>>>>> Stashed changes
           nowLayer.show = show;
           nowLayer.alpha = alpha;
           nowLayer.name = selLayer.name;
