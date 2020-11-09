@@ -60,8 +60,8 @@
     "zlib": "^1.0.5"
   },
   "dependencies": {
-    "cesium": "^1.74.0",
-    "preact": "10.5.4",
+    "cesium": "^1.75.0",
+    "preact": "^10.5.5",
     "preact-router": "^3.2.1"
   },
   "jest": {
