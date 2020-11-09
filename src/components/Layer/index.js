@@ -4,6 +4,7 @@ import Color from 'cesium/Source/Core/Color.js';
 import defined from 'cesium/Source/Core/defined.js';
 import style from './style_modal';
 import LayerModal from 'async!./LayerModal';
+import Datepicker from 'async!../Datepicker';
 
 const Layer = (props) => {
   const {viewer, baseName, userBase} = props;
@@ -34,6 +35,7 @@ const Layer = (props) => {
                 <div id="ctrlsectdiv2">
                   { render_ImgLayer() }
                 </div>
+                <div><Datepicker /></div>
               </div>
             </section>
           </div>
