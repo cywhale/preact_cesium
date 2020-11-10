@@ -38,13 +38,13 @@
    border:1px solid lightgrey;
    border-radius:8px;
    width: auto;
+   max-width: 22em;
    min-width: 250px;
    height: auto;
    left:10%;
    position:absolute;
    top:10%;
    overflow:hidden;
-   max-width:66em;
   -webkit-transition: opacity 400ms ease-in;
   -moz-transition: opacity 400ms ease-in;
   transition: opacity 400ms ease-in;

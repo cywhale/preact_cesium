@@ -35,7 +35,7 @@ const Layer = (props) => {
                 <div id="ctrlsectdiv2">
                   { render_ImgLayer() }
                 </div>
-                <div><Datepicker /></div>
+                <div><Datepicker viewer={viewer} /></div>
               </div>
             </section>
           </div>
