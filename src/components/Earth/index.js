@@ -1,7 +1,9 @@
 import Viewer from 'cesium/Source/Widgets/Viewer/Viewer';
+import SceneMode from 'cesium/Source/Scene/SceneMode';
 import WebMercatorProjection from 'cesium/Source/Core/WebMercatorProjection';
 import { render, Fragment } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useCallback } from 'preact/hooks';
+import Wind3D from '../Wind3D';
 import BasemapPicker from 'async!./BasemapPicker';
 import Layer from 'async!../Layer';
 import style from './style';
@@ -15,6 +17,53 @@ const Earth = (props, ref) => {
     viewer: null
   });
   const [basePick, setBasePick] = useState({ name: "" });
+  const [model3d, setModel3d] = useState({
+    wind: null,
+    initScene3D: false,
+  });
+
+  const handleWind3D = async () => {
+    const {scene} = globe.viewer;
+    //const {context} = scene;
+    //https://stackoverflow.com/questions/29263166/how-to-get-scene-change-events-in-cesium
+    await scene.morphStart.addEventListener(function(ignore, previousMode, newMode) {
+      if (model3d.initScene3D && newMode !== SceneMode.SCENE3D) {
+        model3d.wind.scene.primitives.show = false;
+        model3d.wind.scene.primitives.removeAll();
+        model3d.wind.scene.preRender._listeners = [];
+        //Object.keys(model3d.wind).forEach(function(key) { delete model3d.wind[key]; });
+        setModel3d((preMdl) => ({
+          ...preMdl,
+          wind: null
+        }));
+      }
+    });
+
+    await scene.morphComplete.addEventListener(function(ignore, previousMode, newMode) {
+      if (model3d.initScene3D && typeof model3d.wind !== "undefined" && model3d.wind !== null &&
+          newMode === SceneMode.SCENE3D) {
+        setModel3d((preMdl) => ({
+          ...preMdl,
+          wind: new Wind3D(globe.viewer)
+        }));
+      }
+    });
+  }
+
+  const initModel3D = useCallback(async() => {
+    if (globe.loaded) {
+      if (!model3d.initScene3D) {
+        await setModel3d((preMdl) => ({
+          ...preMdl,
+          wind: new Wind3D(globe.viewer),
+          initScene3D: true,
+        }));
+
+      } else {
+        await handleWind3D();
+      }
+    }
+  },[globe.loaded, model3d.initScene3D]);
 
   useEffect(() => {
     console.log('Initialize Viewer after appstate'); // + appstate);
@@ -22,9 +71,11 @@ const Earth = (props, ref) => {
       setUserScene({ baseLayer: "NOAA ETOPO\u00a0I" });
       initGlobe();
     } else {
-        render(render_basemap(), document.getElementById('rightarea'))
+      render(render_basemap(), document.getElementById('rightarea'))
+      //var wind3D = new Wind3D(globe.viewer);
+      initModel3D();
     }
-  }, [globe.loaded]);
+  }, [globe.loaded, initModel3D]);
 
   const initGlobe = () => {
     setGlobe({

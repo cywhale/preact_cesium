@@ -1,7 +1,8 @@
 {
   "name": "preact_cesium",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
+  "repository": "https://github.com/cywhale/preact_cesium",
   "main": "./src/index.js",
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
@@ -61,6 +62,7 @@
   },
   "dependencies": {
     "cesium": "^1.75.0",
+    "netcdfjs": "^1.0.0",
     "preact": "^10.5.5",
     "preact-router": "^3.2.1"
   },
