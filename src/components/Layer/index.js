@@ -5,6 +5,7 @@ import defined from 'cesium/Source/Core/defined.js';
 import style from './style_modal';
 import LayerModal from 'async!./LayerModal';
 import Datepicker from 'async!../Datepicker';
+import MultiSelectSort from 'async!../MultiSelectSort';
 
 const Layer = (props) => {
   const {viewer, baseName, userBase} = props;
@@ -31,6 +32,7 @@ const Layer = (props) => {
           <div class={style.ctrlwrapper}>
             <section class={style.ctrlsect}>
               <div class={style.ctrlcolumn}>
+                <div><MultiSelectSort /></div>
                 <div id="ctrlsectdiv1" />
                 <div id="ctrlsectdiv2">
                   { render_ImgLayer() }
