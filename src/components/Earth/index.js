@@ -1,15 +1,17 @@
 import Viewer from 'cesium/Source/Widgets/Viewer/Viewer';
-import SceneMode from 'cesium/Source/Scene/SceneMode';
+//import SceneMode from 'cesium/Source/Scene/SceneMode';
 import WebMercatorProjection from 'cesium/Source/Core/WebMercatorProjection';
 import { render, Fragment } from 'preact';
-import { useState, useEffect, useCallback } from 'preact/hooks';
-import Wind3D from '../Wind3D';
+import { useState, useEffect } from 'preact/hooks';
+//import Wind3D from '../Wind3D';
 import BasemapPicker from 'async!./BasemapPicker';
 import Layer from 'async!../Layer';
+//import { EarthContext } from "./EarthContext";
 import style from './style';
 import 'cesium/Source/Widgets/widgets.css';
 
 const Earth = (props, ref) => {
+//const { earth, setEarth } = useContext(EarthContext);
   const [userScene, setUserScene] = useState({ baseLayer: "" });
   const [globe, setGlobe] = useState({
     loaded: false,
@@ -17,10 +19,17 @@ const Earth = (props, ref) => {
     viewer: null
   });
   const [basePick, setBasePick] = useState({ name: "" });
-  const [model3d, setModel3d] = useState({
+/*const [model3d, setModel3d] = useState({
     wind: null,
     initScene3D: false,
   });
+
+  const destroyWind3D = () => {
+    model3d.wind.scene.primitives.show = false;
+    model3d.wind.scene.primitives.removeAll();
+    model3d.wind.scene.preRender._listeners = [];
+    //Object.keys(model3d.wind).forEach(function(key) { delete model3d.wind[key]; });
+  }
 
   const handleWind3D = async () => {
     const {scene} = globe.viewer;
@@ -28,10 +37,7 @@ const Earth = (props, ref) => {
     //https://stackoverflow.com/questions/29263166/how-to-get-scene-change-events-in-cesium
     await scene.morphStart.addEventListener(function(ignore, previousMode, newMode) {
       if (model3d.initScene3D && newMode !== SceneMode.SCENE3D) {
-        model3d.wind.scene.primitives.show = false;
-        model3d.wind.scene.primitives.removeAll();
-        model3d.wind.scene.preRender._listeners = [];
-        //Object.keys(model3d.wind).forEach(function(key) { delete model3d.wind[key]; });
+        destroyWind3D();
         setModel3d((preMdl) => ({
           ...preMdl,
           wind: null
@@ -40,7 +46,7 @@ const Earth = (props, ref) => {
     });
 
     await scene.morphComplete.addEventListener(function(ignore, previousMode, newMode) {
-      if (model3d.initScene3D && typeof model3d.wind !== "undefined" && model3d.wind !== null &&
+      if (model3d.initScene3D && (typeof model3d.wind === "undefined" || model3d.wind === null) &&
           newMode === SceneMode.SCENE3D) {
         setModel3d((preMdl) => ({
           ...preMdl,
@@ -50,8 +56,20 @@ const Earth = (props, ref) => {
     });
   }
 
+  const selModel3D = useCallback(async(selwind) => {
+    if (!selwind && model3d.initScene3D &&
+        typeof model3d.wind !== "undefined" && model3d.wind !== null) { //unselected
+        destroyWind3D();
+        await setModel3d((preMdl) => ({
+          ...preMdl,
+          //initScene3D: false,
+          wind: null
+        }));
+    }
+  }, []);
+
   const initModel3D = useCallback(async() => {
-    if (globe.loaded) {
+    if (globe.loaded && earth.selwind) {
       if (!model3d.initScene3D) {
         await setModel3d((preMdl) => ({
           ...preMdl,
@@ -63,19 +81,21 @@ const Earth = (props, ref) => {
         await handleWind3D();
       }
     }
-  },[globe.loaded, model3d.initScene3D]);
-
+  },[globe.loaded, earth.selwind]);
+*/
   useEffect(() => {
     console.log('Initialize Viewer after appstate'); // + appstate);
     if (!globe.loaded) {
       setUserScene({ baseLayer: "NOAA ETOPO\u00a0I" });
       initGlobe();
-    } else {
+    } else { //if (!model3d.initScene3D) {
       render(render_basemap(), document.getElementById('rightarea'))
-      //var wind3D = new Wind3D(globe.viewer);
-      initModel3D();
-    }
-  }, [globe.loaded, initModel3D]);
+    } /*var wind3D = new Wind3D(globe.viewer);
+      //initModel3D();
+    } else {
+      selModel3D(earth.selwind);
+    }*/
+  }, [globe.loaded]); //, earth.selwind, initModel3D, selModel3D]);
 
   const initGlobe = () => {
     setGlobe({

@@ -1,6 +1,7 @@
 import { createRef } from 'preact';
 import { Router } from 'preact-router';
 import Earth from 'async!./Earth';
+import { EarthContextProvider } from "./Earth/EarthContext";
 import style from './style/style_app';
 /** @jsx h */
 const App = (props) => {
@@ -10,7 +11,9 @@ const App = (props) => {
       <Router>
       <div path='/' class={style.home}>
         <div class={style.right_area} id="rightarea" />
-        <Earth ref={ref} />
+        <EarthContextProvider>
+          <Earth ref={ref} />
+        </EarthContextProvider>
       </div>
       </Router>
     </div>
