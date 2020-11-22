@@ -3,8 +3,9 @@ import Viewer from 'cesium/Source/Widgets/Viewer/Viewer';
 import WebMercatorProjection from 'cesium/Source/Core/WebMercatorProjection';
 import { render, Fragment } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-//import Wind3D from '../Wind3D';
+import { FlowContextProvider } from "../Layer/FlowContext"; //current, flow for Windjs
 import BasemapPicker from 'async!./BasemapPicker';
+import WebGLGlobeDataSource from '../DataCube/WebGLGlobeDataSource';
 import Layer from 'async!../Layer';
 //import { EarthContext } from "./EarthContext";
 import style from './style';
@@ -19,83 +20,17 @@ const Earth = (props, ref) => {
     viewer: null
   });
   const [basePick, setBasePick] = useState({ name: "" });
-/*const [model3d, setModel3d] = useState({
-    wind: null,
-    initScene3D: false,
-  });
 
-  const destroyWind3D = () => {
-    model3d.wind.scene.primitives.show = false;
-    model3d.wind.scene.primitives.removeAll();
-    model3d.wind.scene.preRender._listeners = [];
-    //Object.keys(model3d.wind).forEach(function(key) { delete model3d.wind[key]; });
-  }
-
-  const handleWind3D = async () => {
-    const {scene} = globe.viewer;
-    //const {context} = scene;
-    //https://stackoverflow.com/questions/29263166/how-to-get-scene-change-events-in-cesium
-    await scene.morphStart.addEventListener(function(ignore, previousMode, newMode) {
-      if (model3d.initScene3D && newMode !== SceneMode.SCENE3D) {
-        destroyWind3D();
-        setModel3d((preMdl) => ({
-          ...preMdl,
-          wind: null
-        }));
-      }
-    });
-
-    await scene.morphComplete.addEventListener(function(ignore, previousMode, newMode) {
-      if (model3d.initScene3D && (typeof model3d.wind === "undefined" || model3d.wind === null) &&
-          newMode === SceneMode.SCENE3D) {
-        setModel3d((preMdl) => ({
-          ...preMdl,
-          wind: new Wind3D(globe.viewer)
-        }));
-      }
-    });
-  }
-
-  const selModel3D = useCallback(async(selwind) => {
-    if (!selwind && model3d.initScene3D &&
-        typeof model3d.wind !== "undefined" && model3d.wind !== null) { //unselected
-        destroyWind3D();
-        await setModel3d((preMdl) => ({
-          ...preMdl,
-          //initScene3D: false,
-          wind: null
-        }));
-    }
-  }, []);
-
-  const initModel3D = useCallback(async() => {
-    if (globe.loaded && earth.selwind) {
-      if (!model3d.initScene3D) {
-        await setModel3d((preMdl) => ({
-          ...preMdl,
-          wind: new Wind3D(globe.viewer),
-          initScene3D: true,
-        }));
-
-      } else {
-        await handleWind3D();
-      }
-    }
-  },[globe.loaded, earth.selwind]);
-*/
   useEffect(() => {
     console.log('Initialize Viewer after appstate'); // + appstate);
     if (!globe.loaded) {
       setUserScene({ baseLayer: "NOAA ETOPO\u00a0I" });
       initGlobe();
-    } else { //if (!model3d.initScene3D) {
-      render(render_basemap(), document.getElementById('rightarea'))
-    } /*var wind3D = new Wind3D(globe.viewer);
-      //initModel3D();
     } else {
-      selModel3D(earth.selwind);
-    }*/
-  }, [globe.loaded]); //, earth.selwind, initModel3D, selModel3D]);
+      render(render_basemap(), document.getElementById('rightarea'))
+      render_datacube();
+    }
+  }, [globe.loaded]);
 
   const initGlobe = () => {
     setGlobe({
@@ -109,6 +44,31 @@ const Earth = (props, ref) => {
         mapProjection : new WebMercatorProjection,
       }),
     });
+  };
+
+  const render_datacube = () => {
+    if (globe.loaded) {
+      const dataSource = new WebGLGlobeDataSource();
+      dataSource
+        .loadUrl("assets/data/test/population909500.json")
+        .then(function () {
+        //After the initial load, create buttons to let the user switch among series.
+          function createSeriesSetter(seriesName) {
+            return function () {
+              dataSource.seriesToDisplay = seriesName;
+            };
+          }
+/*        for (let i = 0; i < dataSource.seriesNames.length; i++) {
+            let seriesName = dataSource.seriesNames[i];
+            Sandcastle.addToolbarButton(
+              seriesName,
+              createSeriesSetter(seriesName)
+            );
+         }*/
+      });
+      //viewer.clock.shouldAnimate = false;
+      globe.viewer.dataSources.add(dataSource);
+    }
   };
 
   const render_basemap = () => {
@@ -129,12 +89,15 @@ const Earth = (props, ref) => {
   const render_layer = () => {
     if (globe.loaded & globe.baseLoaded) {
       return (
-        <Layer viewer={globe.viewer} baseName={basePick.name} userBase={userScene.baseLayer}/>
+        <FlowContextProvider>
+          <Layer viewer={globe.viewer} baseName={basePick.name} userBase={userScene.baseLayer}/>
+        </FlowContextProvider>
       );
     }
     return null;
   };
 
+/* <canvas id="wind" class={style.canvasWind} /> */
   return (
     <Fragment>
       <div id="cesiumContainer"

@@ -7,13 +7,14 @@ import { useContext, useMemo} from "preact/hooks";
 //For completion, it's possible to make CSS Modules work outside the /components folder?
 //https://stackoverflow.com/questions/49118172/preact-cli-css-modules
 import { EarthContext } from "../Earth/EarthContext";
+import { FlowContext } from "../Layer/FlowContext";
 import 'react-dropdown-tree-select/dist/styles.css'
 import '../../style/style_dropdown.scss';
 import data from './data.json';
 
 const MultiSelectSort = () => {
-
   const { earth, setEarth } = useContext(EarthContext);
+  const { flow, setFlow } = useContext(FlowContext);
 /*const [ value, setValue ] = useState({
     leaf: []
   });*/
@@ -47,27 +48,23 @@ const MultiSelectSort = () => {
         valx.push(item.value);
       }
     });
-    console.log('Get leaf value: ', valx);
-/*
-    setValue((preVal) => ({
-      ...preVal,
-      leaf: valx,
-    }));
-*/
+    //console.log('Get leaf value: ', valx);
     handleLeafSelect(valx);
   }, []);
 
-  const handleLeafSelect = (value) => { //useCallback(async () => {
+  const handleLeafSelect = async (value) => { //useCallback(async () => {
     //if (value.indexOf('wind3d') >= 0) {
       //console.log('Wind3d: ', value.indexOf('wind3d'));
-    setEarth((preState) => ({
+    await setEarth((preState) => ({
         ...preState,
         selwind: value.indexOf('wind3d') >= 0,
-        setcurr: value.indexOf('current') >= 0
+    }));
+    await setFlow((preState) => ({
+        ...preState,
+        selcurr: value.indexOf('current') >= 0
     }));
   };//, []);
-/*
-  useEffect(() => {
+/*useEffect(() => {
     if (value.leaf && value.leaf.length > 0) { handleLeafSelect(); }
   }, [value.leaf]);
 

@@ -1,5 +1,5 @@
-import { Fragment } from 'preact';
-import { useState, useEffect, useContext } from 'preact/hooks';
+import { render, Fragment } from 'preact';
+import { useState, useEffect, useContext, useRef, useCallback } from 'preact/hooks';
 import Color from 'cesium/Source/Core/Color.js';
 import defined from 'cesium/Source/Core/defined.js';
 import SceneMode from 'cesium/Source/Scene/SceneMode';
@@ -7,17 +7,25 @@ import style from './style_modal';
 import LayerModal from 'async!./LayerModal';
 import Datepicker from 'async!../Datepicker';
 import { EarthContext } from "../Earth/EarthContext";
+import { FlowContext } from "./FlowContext"; //current, flow for Windjs
 import MultiSelectSort from 'async!../MultiSelectSort';
 import Wind3D from '../Wind3D';
+import Windjs from '../Windjs';
 
 const Layer = (props) => {
   const { viewer, baseName, userBase } = props;
   const { scene } = viewer;
+  const multiselRef = useRef(null);
   const { earth, setEarth } = useContext(EarthContext);
+  const { flow, setFlow } = useContext(FlowContext);
+
   const [model3d, setModel3d] = useState({
     wind: null,
     initScene3D: false,
     initEventTrig: false,
+  });
+  const [curr, setCurr] = useState({
+    loaded: false,
   });
 
   const render_ImgLayer = () => {
@@ -95,6 +103,24 @@ const Layer = (props) => {
     }
   };
 
+  const render_windjs = useCallback(() => {
+    let params;
+    //if (curr === null || typeof curr === 'undefined') {
+      params = {viewer: viewer, enable: flow.selcurr, gfsdate: '2017-12-13', gfstime: '00',
+                loaded: false, started: false, windy: null};
+    //} else {
+    //  params = {viewer: viewer, enable: flow.selcurr, gfsdate: '2017-12-13', gfstime: '00',
+    //            loaded: curr.loaded, started: curr.started, windy: curr.windy};
+    //}
+    //0let windx =
+    Windjs(params);
+    setCurr((preState) => ({
+      ...preState,
+      loaded: true,
+    }));
+    //if (!!windx) setCurr(...windx);
+  }, [flow.selcurr]); //curr
+
   useEffect(() => {
     if (!earth.loaded) {
       console.log("Test basemaplayer name: ", baseName, " & ", userBase);
@@ -104,13 +130,17 @@ const Layer = (props) => {
       }));
     } else {
       //var wind3D = new Wind3D(globe.viewer);
-      if (earth.selwind) {
-        initModel3D(earth.selwind, scene);
-      } else {
-        deselModel3D(earth.selwind, scene.mode === SceneMode.SCENE3D);
+      if (multiselRef.current) {
+        if (earth.selwind) {
+          initModel3D(earth.selwind, scene);
+        } else {
+          deselModel3D(earth.selwind, scene.mode === SceneMode.SCENE3D);
+        }
+        if (!curr.loaded) render_windjs();
       }
     }
-  }, [earth.loaded, earth.selwind, scene.mode, initModel3D]);
+  }, [earth.loaded, earth.selwind, scene.mode, multiselRef.current, initModel3D,
+      render_windjs]);
 
   return (
     <Fragment>
@@ -126,7 +156,7 @@ const Layer = (props) => {
           <div class={style.ctrlwrapper}>
             <section class={style.ctrlsect}>
               <div class={style.ctrlcolumn}>
-                <div><MultiSelectSort /></div>
+                <div ref={multiselRef}><MultiSelectSort /></div>
                 <div id="ctrlsectdiv1" />
                 <div id="ctrlsectdiv2">
                   { render_ImgLayer() }
