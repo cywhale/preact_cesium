@@ -17,7 +17,7 @@ export default function Windy ( params ) {
   var PARTICLE_LINE_WIDTH = 1.0;              // line width of a drawn particle
   var PARTICLE_MULTIPLIER = 3;            // particle count scalar (completely arbitrary--this values looks nice) scale: [5, 10, 15, 20, 25, 30, 35, 40]
   var PARTICLE_REDUCTION = 0.75;            // reduce particle count to this much of normal for mobile devices
-  var FRAME_RATE = 40;                      // desired milliseconds per frame
+  var FRAME_RATE = 33;                      // desired milliseconds per frame
   var BOUNDARY = 0.45;
 
   var NULL_WIND_VECTOR = [NaN, NaN, null];  // singleton for no wind in the form: [u, v, magnitude]

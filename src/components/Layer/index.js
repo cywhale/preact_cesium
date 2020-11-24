@@ -103,7 +103,7 @@ const Layer = (props) => {
 
   const render_windjs = async (enable) => {
     if (enable && curr === null) {
-      const params = {viewer: viewer, flowdata: {date: '2017-12-13', time: '00'}};
+      const params = {viewer: viewer, flowdata: {date: '2018-06-25', time: '00'}}; //2014-11-30
       //const flowx = FlowContainer(params);
       await setCurr(new FlowContainer(params)); //flowx
     } else if (enable) {
