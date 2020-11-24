@@ -101,12 +101,12 @@ const Layer = (props) => {
     }
   };
 
-  const render_windjs = useCallback((enable) => {
+  const render_windjs = (enable) => {
     if (enable && curr === null) {
       const params = {viewer: viewer, flowdata: {date: '2014-11-30', time: '00'}};
       const flowx = FlowContainer(params);
       setCurr(flowx);
-
+/*
     } else if (enable && !model3D.initCurrEvent) {
       viewer.camera.moveStart.addEventListener(function () {
         //console.log("move start...");
@@ -130,15 +130,16 @@ const Layer = (props) => {
           ...preMdl,
           initCurrEvent: true,
       }));
+*/
     } else if (enable) {
       let wind = document.getElementById("wind");
       if (wind.style.display === 'none') {
         curr.redraw(curr.windy);
       }
     } else if (!enable && curr !== null) {
-      curr.windy.stop();
+      curr.stop(curr.windy);
     }
-  },[]);
+  }; //,[]);
 
   useEffect(() => {
     if (!earth.loaded) {

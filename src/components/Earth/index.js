@@ -28,7 +28,7 @@ const Earth = (props, ref) => {
       initGlobe();
     } else {
       render(render_basemap(), document.getElementById('rightarea'))
-      render_datacube();
+      //render_datacube();
     }
   }, [globe.loaded]);
 

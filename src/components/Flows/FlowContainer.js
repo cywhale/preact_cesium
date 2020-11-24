@@ -37,7 +37,7 @@ export default function WindyContainer (props) {
                 redraw(windy);
             });
     };
-    initDraw();
+    if (!started) initDraw();
 
     function redraw(windx) {
         let width = viewer.canvas.width;
@@ -47,18 +47,43 @@ export default function WindyContainer (props) {
         wind.height = height;
         windx.stop();
 
-        started = windy.start(
+        started = windx.start(
             [[0, 0], [width, height]],
             width,
             height
         );
         wind.style.display = 'block';
-    }
+    };
+
+    function stop(windx) {
+      let wind = document.getElementById("wind");
+      wind.style.display = 'none';
+      windx.stop();
+    };
+
+    viewer.camera.moveStart.addEventListener(function () {
+        //console.log("move start...");
+        let wind = document.getElementById("wind");
+        wind.style.display = 'none';
+        if (!!windy && started) {
+            windy.stop();
+        }
+    });
+
+    viewer.camera.moveEnd.addEventListener(function () {
+        //console.log("move end...");
+        let wind = document.getElementById("wind");
+        wind.style.display = 'none';
+        if (!!windy && started) {
+            redraw(windy);
+        }
+    });
 
     const flow = {
         windy: windy,
         started: started,
-        redraw: redraw
+        redraw: redraw,
+        stop: stop
     };
 
     return flow;

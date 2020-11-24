@@ -10,14 +10,14 @@
 export default function Windy ( params ) {
   var VELOCITY_SCALE = 0.011;             // scale for wind velocity (completely arbitrary--this value looks nice)
   var INTENSITY_SCALE_STEP = 10;            // step size of particle intensity color scale
-  var MAX_TASK_TIME = 1000;					// amount of time before a task yields control (millis)
+  var MAX_TASK_TIME = 1000;		    // amount of time before a task yields control (millis)
   var MIN_SLEEP_TIME = 25;                  // amount of time a task waits before resuming (millis)
   var MAX_WIND_INTENSITY = 40;              // wind velocity at which particle intensity is maximum (m/s)
   var MAX_PARTICLE_AGE = 100;                // max number of frames a particle is drawn before regeneration
-  var PARTICLE_LINE_WIDTH = 1;              // line width of a drawn particle
-  var PARTICLE_MULTIPLIER = 3;              // particle count scalar (completely arbitrary--this values looks nice) scale: [5, 10, 15, 20, 25, 30, 35, 40]
+  var PARTICLE_LINE_WIDTH = 1.01;              // line width of a drawn particle
+  var PARTICLE_MULTIPLIER = 3;            // particle count scalar (completely arbitrary--this values looks nice) scale: [5, 10, 15, 20, 25, 30, 35, 40]
   var PARTICLE_REDUCTION = 0.75;            // reduce particle count to this much of normal for mobile devices
-  var FRAME_RATE = 50;                      // desired milliseconds per frame
+  var FRAME_RATE = 40;                      // desired milliseconds per frame
   var BOUNDARY = 0.45;
 
   var NULL_WIND_VECTOR = [NaN, NaN, null];  // singleton for no wind in the form: [u, v, magnitude]
@@ -319,7 +319,7 @@ export default function Windy ( params ) {
                 while (x < bounds.width) {
                     interpolateColumn(x);
                     x += 2;
-                    if ((Date.now() - start) > MAX_TASK_TIME) { 
+                    if ((Date.now() - start) > MAX_TASK_TIME) {
                         setTimeout(batchInterpolate, MIN_SLEEP_TIME);
                         return;
                     }
@@ -382,13 +382,13 @@ export default function Windy ( params ) {
     //var colorStyles = µ.windIntensityColorScale(INTENSITY_SCALE_STEP, 17);
     var buckets = colorStyles.map(function() { return []; });
 
-    var particleCount = Math.round(bounds.width * PARTICLE_MULTIPLIER);
+    var particleCount = Math.round(bounds.width * PARTICLE_MULTIPLIER); // bounds.height *
     console.log(particleCount);
     if (isMobile()) {
       particleCount *= PARTICLE_REDUCTION;
     }
 
-    var fadeFillStyle = "rgba(255, 0, 0, 0.95)";
+    var fadeFillStyle = "rgba(255, 0, 0, 0.965)";
 
     var particles = [];
     for (var i = 0; i < particleCount; i++) {
