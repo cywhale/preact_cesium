@@ -52,14 +52,14 @@ const MultiSelectSort = () => {
     handleLeafSelect(valx);
   }, []);
 
-  const handleLeafSelect = async (value) => { //useCallback(async () => {
+  const handleLeafSelect = (value) => { //useCallback(async () => {
     //if (value.indexOf('wind3d') >= 0) {
       //console.log('Wind3d: ', value.indexOf('wind3d'));
-    await setEarth((preState) => ({
+    setEarth((preState) => ({
         ...preState,
         selwind: value.indexOf('wind3d') >= 0,
     }));
-    await setFlow((preState) => ({
+    setFlow((preState) => ({
         ...preState,
         selcurr: value.indexOf('current') >= 0
     }));

@@ -10,7 +10,7 @@ import { EarthContext } from "../Earth/EarthContext";
 import { FlowContext } from "./FlowContext"; //current, flow for Windjs
 import MultiSelectSort from 'async!../MultiSelectSort';
 import Wind3D from '../Wind3D';
-import Windjs from '../Windjs';
+import FlowContainer from '../Flows/FlowContainer';
 
 const Layer = (props) => {
   const { viewer, baseName, userBase } = props;
@@ -22,11 +22,9 @@ const Layer = (props) => {
   const [model3d, setModel3d] = useState({
     wind: null,
     initScene3D: false,
-    initEventTrig: false,
+    initCurrEvent: false,
   });
-  const [curr, setCurr] = useState({
-    loaded: false,
-  });
+  const [curr, setCurr] = useState(null);
 
   const render_ImgLayer = () => {
     return(<LayerModal viewer={viewer} baseName={baseName} userBase={userBase} />);
@@ -103,23 +101,44 @@ const Layer = (props) => {
     }
   };
 
-  const render_windjs = useCallback(() => {
-    let params;
-    //if (curr === null || typeof curr === 'undefined') {
-      params = {viewer: viewer, enable: flow.selcurr, gfsdate: '2017-12-13', gfstime: '00',
-                loaded: false, started: false, windy: null};
-    //} else {
-    //  params = {viewer: viewer, enable: flow.selcurr, gfsdate: '2017-12-13', gfstime: '00',
-    //            loaded: curr.loaded, started: curr.started, windy: curr.windy};
-    //}
-    //0let windx =
-    Windjs(params);
-    setCurr((preState) => ({
-      ...preState,
-      loaded: true,
-    }));
-    //if (!!windx) setCurr(...windx);
-  }, [flow.selcurr]); //curr
+  const render_windjs = useCallback((enable) => {
+    if (enable && curr === null) {
+      const params = {viewer: viewer, flowdata: {date: '2014-11-30', time: '00'}};
+      const flowx = FlowContainer(params);
+      setCurr(flowx);
+
+    } else if (enable && !model3D.initCurrEvent) {
+      viewer.camera.moveStart.addEventListener(function () {
+        //console.log("move start...");
+        let wind = document.getElementById("wind");
+        wind.style.display = 'none';
+        if (!!curr.windy && curr.started) {
+            curr.windy.stop();
+        }
+      });
+
+      viewer.camera.moveEnd.addEventListener(function () {
+        //console.log("move end...");
+        let wind = document.getElementById("wind");
+        wind.style.display = 'none';
+        if (!!curr.windy && curr.started) {
+            curr.redraw(curr.windy);
+        }
+      });
+
+      setModel3d((preMdl) => ({
+          ...preMdl,
+          initCurrEvent: true,
+      }));
+    } else if (enable) {
+      let wind = document.getElementById("wind");
+      if (wind.style.display === 'none') {
+        curr.redraw(curr.windy);
+      }
+    } else if (!enable && curr !== null) {
+      curr.windy.stop();
+    }
+  },[]);
 
   useEffect(() => {
     if (!earth.loaded) {
@@ -136,7 +155,7 @@ const Layer = (props) => {
         } else {
           deselModel3D(earth.selwind, scene.mode === SceneMode.SCENE3D);
         }
-        if (!curr.loaded) render_windjs();
+        render_windjs(flow.selcurr);
       }
     }
   }, [earth.loaded, earth.selwind, scene.mode, multiselRef.current, initModel3D,
