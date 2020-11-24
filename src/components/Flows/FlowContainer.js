@@ -2,15 +2,17 @@ import windyGlobe from './windyGlobe';
 import Windy from './Windy';
 const { windConfig } = require('./.setting.js');
 
-export default function WindyContainer (props) {
-    const {viewer, flowdata} = props;
-    var windGlobe = windyGlobe(viewer);
-    var canvas = getCanvas();
-    var windy;
-    var started = false;
+export default class WindyContainer {
+    constructor(props) {
+      const {viewer, flowdata} = props;
+      this.viewer = viewer;
+      this.windGlobe = windyGlobe(viewer);
+      this.canvas = getCanvas();
+      //this windy = null;
+      this.started = false;
 
-    function getCanvas () {
-        //let canvasx = document.querySelector("#cesiumContainer > div > div.cesium-viewer-cesiumWidgetContainer > div > canvas");
+      function getCanvas() {
+        //let canvasx = document.querySelector("#cesiumContainer > div > div.cesium-viewer-cesiumWidgetContainer > div > canvas"$
         let canvasx = document.getElementById("wind");
         if (!canvasx || canvasx === null) {
             canvasx = document.createElement("canvas");
@@ -26,28 +28,31 @@ export default function WindyContainer (props) {
         }
         //var context = canvas.getContext("2d");
         return canvasx;
-    };
+      };
 
-    async function initDraw () {
-        await fetch(windConfig.base + 'gfs_' + flowdata.date.replace(/-/g, '') + flowdata.time + '.json')
+      //async function initDraw (canvas, globe) {
+      //await
+      fetch(windConfig.base + 'gfs_' + flowdata.date.replace(/-/g, '') + flowdata.time + '.json')
             .then(response => response.json())
             .catch(err => console.error('Fetch Wind Json Error:', err))
             .then(data => {
-                windy = new Windy({ canvas: canvas, data: data, windGlobe: windGlobe });
-                redraw(windy);
+                this.windy = new Windy({ canvas: this.canvas, data: data, windGlobe: this.windGlobe });
+                this.redraw();
+                this.setupEventListeners();
             });
-    };
-    if (!started) initDraw();
+      //};
+      //initDraw(this.canvas, this.windGlobe);
+    }
 
-    function redraw(windx) {
-        let width = viewer.canvas.width;
-        let height = viewer.canvas.height;
+    redraw() {
+        let width = this.viewer.canvas.width;
+        let height = this.viewer.canvas.height;
         let wind = document.getElementById("wind");
         wind.width = width;
         wind.height = height;
-        windx.stop();
+        this.windy.stop();
 
-        started = windx.start(
+        this.started = this.windy.start(
             [[0, 0], [width, height]],
             width,
             height
@@ -55,36 +60,38 @@ export default function WindyContainer (props) {
         wind.style.display = 'block';
     };
 
-    function stop(windx) {
+    stop() {
       let wind = document.getElementById("wind");
       wind.style.display = 'none';
-      windx.stop();
+      this.windy.stop();
     };
 
-    viewer.camera.moveStart.addEventListener(function () {
+    setupEventListeners() {
+      const that = this;
+      this.viewer.camera.moveStart.addEventListener(function () {
         //console.log("move start...");
         let wind = document.getElementById("wind");
         wind.style.display = 'none';
-        if (!!windy && started) {
-            windy.stop();
+        if (!!that.windy && that.started) {
+            that.windy.stop();
         }
-    });
+      });
 
-    viewer.camera.moveEnd.addEventListener(function () {
+      this.viewer.camera.moveEnd.addEventListener(function () {
         //console.log("move end...");
         let wind = document.getElementById("wind");
         wind.style.display = 'none';
-        if (!!windy && started) {
-            redraw(windy);
+        if (!!that.windy && that.started) {
+            that.redraw();
         }
-    });
-
-    const flow = {
+      });
+    }
+/*  const flow = {
         windy: windy,
         started: started,
         redraw: redraw,
         stop: stop
     };
-
     return flow;
+*/
 };

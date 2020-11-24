@@ -14,7 +14,7 @@ export default function Windy ( params ) {
   var MIN_SLEEP_TIME = 25;                  // amount of time a task waits before resuming (millis)
   var MAX_WIND_INTENSITY = 40;              // wind velocity at which particle intensity is maximum (m/s)
   var MAX_PARTICLE_AGE = 100;                // max number of frames a particle is drawn before regeneration
-  var PARTICLE_LINE_WIDTH = 1.01;              // line width of a drawn particle
+  var PARTICLE_LINE_WIDTH = 1.0;              // line width of a drawn particle
   var PARTICLE_MULTIPLIER = 3;            // particle count scalar (completely arbitrary--this values looks nice) scale: [5, 10, 15, 20, 25, 30, 35, 40]
   var PARTICLE_REDUCTION = 0.75;            // reduce particle count to this much of normal for mobile devices
   var FRAME_RATE = 40;                      // desired milliseconds per frame

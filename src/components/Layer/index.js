@@ -1,5 +1,5 @@
 import { render, Fragment } from 'preact';
-import { useState, useEffect, useContext, useRef, useCallback } from 'preact/hooks';
+import { useState, useEffect, useContext, useRef } from 'preact/hooks';
 import Color from 'cesium/Source/Core/Color.js';
 import defined from 'cesium/Source/Core/defined.js';
 import SceneMode from 'cesium/Source/Scene/SceneMode';
@@ -101,45 +101,20 @@ const Layer = (props) => {
     }
   };
 
-  const render_windjs = (enable) => {
+  const render_windjs = async (enable) => {
     if (enable && curr === null) {
-      const params = {viewer: viewer, flowdata: {date: '2014-11-30', time: '00'}};
-      const flowx = FlowContainer(params);
-      setCurr(flowx);
-/*
-    } else if (enable && !model3D.initCurrEvent) {
-      viewer.camera.moveStart.addEventListener(function () {
-        //console.log("move start...");
-        let wind = document.getElementById("wind");
-        wind.style.display = 'none';
-        if (!!curr.windy && curr.started) {
-            curr.windy.stop();
-        }
-      });
-
-      viewer.camera.moveEnd.addEventListener(function () {
-        //console.log("move end...");
-        let wind = document.getElementById("wind");
-        wind.style.display = 'none';
-        if (!!curr.windy && curr.started) {
-            curr.redraw(curr.windy);
-        }
-      });
-
-      setModel3d((preMdl) => ({
-          ...preMdl,
-          initCurrEvent: true,
-      }));
-*/
+      const params = {viewer: viewer, flowdata: {date: '2017-12-13', time: '00'}};
+      //const flowx = FlowContainer(params);
+      await setCurr(new FlowContainer(params)); //flowx
     } else if (enable) {
       let wind = document.getElementById("wind");
       if (wind.style.display === 'none') {
-        curr.redraw(curr.windy);
+        await curr.redraw();
       }
     } else if (!enable && curr !== null) {
-      curr.stop(curr.windy);
+      await curr.stop();
     }
-  }; //,[]);
+  };
 
   useEffect(() => {
     if (!earth.loaded) {
