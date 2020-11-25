@@ -5,7 +5,7 @@ import { render, Fragment } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import { FlowContextProvider } from "../Layer/FlowContext"; //current, flow for Windjs
 import BasemapPicker from 'async!./BasemapPicker';
-import WebGLGlobeDataSource from '../DataCube/WebGLGlobeDataSource';
+//import WebGLGlobeDataSource from '../DataCube/WebGLGlobeDataSource';
 import Layer from 'async!../Layer';
 //import { EarthContext } from "./EarthContext";
 import style from './style';
@@ -44,31 +44,6 @@ const Earth = (props, ref) => {
         mapProjection : new WebMercatorProjection,
       }),
     });
-  };
-
-  const render_datacube = () => {
-    if (globe.loaded) {
-      const dataSource = new WebGLGlobeDataSource();
-      dataSource
-        .loadUrl("assets/data/test/population909500.json")
-        .then(function () {
-        //After the initial load, create buttons to let the user switch among series.
-          function createSeriesSetter(seriesName) {
-            return function () {
-              dataSource.seriesToDisplay = seriesName;
-            };
-          }
-/*        for (let i = 0; i < dataSource.seriesNames.length; i++) {
-            let seriesName = dataSource.seriesNames[i];
-            Sandcastle.addToolbarButton(
-              seriesName,
-              createSeriesSetter(seriesName)
-            );
-         }*/
-      });
-      //viewer.clock.shouldAnimate = false;
-      globe.viewer.dataSources.add(dataSource);
-    }
   };
 
   const render_basemap = () => {

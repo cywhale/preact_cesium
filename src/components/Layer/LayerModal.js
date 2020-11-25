@@ -8,9 +8,11 @@ import SingleTileImageryProvider from 'cesium/Source/Scene/SingleTileImageryProv
 //import GridImageryProvider from 'cesium/Source/Scene/GridImageryProvider';
 //import WebMapServiceImageryProvider from 'cesium/Source/Scene/WebMapServiceImageryProvider';
 import TileCoordinatesImageryProvider from 'cesium/Source/Scene/TileCoordinatesImageryProvider';
+//import WindImageryProvider from '../Windgl/WindImageryProvider';
 import knockout from 'cesium/Source/ThirdParty/knockout.js';
 import style from './style_layermodal';
 import '../../style/style_layerctrl.scss';
+//const { windImagery } = require('./.setting.js');
 
 const LayerModal = (props) => {
   const { viewer, baseName, userBase } = props;
@@ -211,7 +213,11 @@ const LayerModal = (props) => {
       new TileCoordinatesImageryProvider(),
       1.0, false
     );
-  }
+/*  addAdditionalLayerOption("Wind (Webgl)",
+      new WindImageryProvider({viewer: viewer, //clock:viewer.cesiumWidget.clock,
+                               dataset: {base: windImagery.base, date: '2020-11-13', time: '00'}}),
+      1.0, false);*/
+  };
 
   return (
     <div id="layerctrl" ref={layerctrlRef}>

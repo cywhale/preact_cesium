@@ -136,6 +136,13 @@ const cesium_other_config = (config, env) => {
               // extractTextPluginOptions
               // )
         }, {
+           test: /\.(glsl|vs|fs|vert|frag)$/,
+           exclude: /node_modules/,
+           use: [
+             'raw-loader',
+             'glslify-loader'
+           ]
+        }, {
             test: /\.(png|gif|jpg|jpeg|svg|xml|json)$/,
             use: [ 'url-loader' ],
             //name: 'static/media/[name].[hash:8].[ext]'

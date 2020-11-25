@@ -5,8 +5,8 @@ const EarthContext = createContext();
 const EarthContextProvider = (props) => {//,...children
   const [earth, setEarth] = useState({
     loaded: false,
+    selReady: false,
     selwind: false,
-    selcurr: false
     //base: '',
     //layers: '',
   });

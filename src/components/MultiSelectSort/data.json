@@ -27,6 +27,14 @@
       }
     ],
     "value": "region"
+  },
+  {
+    "label": "Socioeconomics",
+    "disabled": false,
+    "children": [
+      { "value": "population", "label": "Population 1990-2000", "type": "stat" }
+    ],
+    "value": "socioeconomics"
   }
 ]
 

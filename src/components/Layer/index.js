@@ -11,6 +11,7 @@ import { FlowContext } from "./FlowContext"; //current, flow for Windjs
 import MultiSelectSort from 'async!../MultiSelectSort';
 import Wind3D from '../Wind3D';
 import FlowContainer from '../Flows/FlowContainer';
+import WebGLGlobeDataSource from '../DataCube/WebGLGlobeDataSource';
 
 const Layer = (props) => {
   const { viewer, baseName, userBase } = props;
@@ -23,6 +24,8 @@ const Layer = (props) => {
     wind: null,
     initScene3D: false,
     initCurrEvent: false,
+    cube_demo1: -1, // demo data_cube (population temp)
+    cube_demolayer: null,
   });
   const [curr, setCurr] = useState(null);
 
@@ -116,6 +119,67 @@ const Layer = (props) => {
     }
   };
 
+  const render_datacube = (enable) => {
+    if (enable && model3d.cube_demolayer === null) {
+      const dataSource = new WebGLGlobeDataSource();
+      dataSource
+        .loadUrl("assets/data/test/population909500.json")
+        .then(function () {
+        //After the initial load, create buttons to let the user switch among series.
+          function createSeriesSetter(seriesName) {
+            return function () {
+              dataSource.seriesToDisplay = seriesName;
+            };
+          }
+//        for (let i = 0; i < dataSource.seriesNames.length; i++) {
+//            let seriesName = dataSource.seriesNames[i];
+//            Sandcastle.addToolbarButton(
+//              seriesName,
+//              createSeriesSetter(seriesName)
+//            );
+//       }
+      });
+      //viewer.clock.shouldAnimate = false;
+      viewer.dataSources.add(dataSource);
+      setModel3d((preMdl) => ({
+          ...preMdl,
+          cube_demo1: viewer.dataSources._dataSources.length - 1,
+          cube_demolayer: dataSource, //viewer.dataSources._dataSources[model3d.cube_demo1]._seriesToDisplay,
+      }));
+    } else if (enable && model3d.cube_demolayer !== null && model3d.cube_demo1 === -1) {
+      //viewer.dataSources._dataSources[model3d.cube_demo1]._seriesToDisplay = model3d.cube_demolayer;
+      //viewer.dataSources._dataSources[model3d.cube_demo1].show = true;
+      //model3d.cube_demolayer.show = true;
+      if (!viewer.dataSources.contains(model3d.cube_demolayer)) {
+        viewer.dataSources.add(model3d.cube_demolayer);
+        setModel3d((preMdl) => ({
+            ...preMdl,
+            cube_demo1: viewer.dataSources._dataSources.length - 1,
+        }));
+      }
+    } else if (!enable && model3d.cube_demo1 >= 0) {
+      //viewer.dataSources._dataSources[model3d.cube_demo1]._seriesToDisplay='';
+      //viewer.dataSources._dataSources[model3d.cube_demo1].show = false;
+      //model3d.cube_demolayer.show = false;
+      if (viewer.dataSources.contains(model3d.cube_demolayer)) {
+        viewer.dataSources.remove(model3d.cube_demolayer);
+        setModel3d((preMdl) => ({
+          ...preMdl,
+          cube_demo1: -1,
+        }));
+      }
+    }
+  };
+/*const addDemoListener = () => {
+          let chkdemo1 = document.getElementById("rdts1-2-0-0");
+          if (chkdemo1 !== null) {
+            //chkdemo1.addEventListener('change', function() {
+              render_datacube(chkdemo1.checked);
+            //console.log("Checkbox is checked: ", this.checked);
+            //});
+          }
+  }
+*/
   useEffect(() => {
     if (!earth.loaded) {
       console.log("Test basemaplayer name: ", baseName, " & ", userBase);
@@ -132,10 +196,13 @@ const Layer = (props) => {
           deselModel3D(earth.selwind, scene.mode === SceneMode.SCENE3D);
         }
         render_windjs(flow.selcurr);
+
+        //if (earth.selReady) { addDemoListener(); } //&& model3d.cube_demo1 === -1
+        render_datacube(earth.selReady); // temp used
       }
     }
   }, [earth.loaded, earth.selwind, scene.mode, multiselRef.current, initModel3D,
-      render_windjs]);
+      render_windjs, render_datacube]); //earth.selReady
 
   return (
     <Fragment>

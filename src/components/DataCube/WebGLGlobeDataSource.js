@@ -274,46 +274,46 @@ WebGLGlobeDataSource.prototype.load = function (data) {
   // ["series2",[latitude, longitude, height, ... ]]
 
   // Loop over each series
-  for (var x = 0; x < data.length; x++) {
-    var series = data[x];
-    var seriesName = series[0];
-    var coordinates = series[1];
+  for (let x = 0; x < data.length; x++) {
+    let series = data[x];
+    let seriesName = series[0];
+    let coordinates = series[1];
 
     //Add the name of the series to our list of possible values.
     this._seriesNames.push(seriesName);
 
     //Make the first series the visible one by default
-    var show = x === 0;
+    let show = x === 0;
     if (show) {
       this._seriesToDisplay = seriesName;
     }
 
     //Now loop over each coordinate in the series and create
     // our entities from the data.
-    for (var i = 0; i < coordinates.length; i += 3) {
-      var latitude = coordinates[i];
-      var longitude = coordinates[i + 1];
-      var height = coordinates[i + 2];
+    for (let i = 0; i < coordinates.length; i += 3) {
+      let latitude = coordinates[i];
+      let longitude = coordinates[i + 1];
+      let height = coordinates[i + 2];
 
       //Ignore lines of zero height.
       if (height === 0) {
         continue;
       }
 
-      var color = Color.fromHsl(0.6 - height * 0.5, 1.0, 0.5);
-      var surfacePosition = Cartesian3.fromDegrees(
+      let color = Color.fromHsl(0.6 - height * 0.5, 1.0, 0.5);
+      let surfacePosition = Cartesian3.fromDegrees(
         longitude,
         latitude,
         0
       );
-      var heightPosition = Cartesian3.fromDegrees(
+      let heightPosition = Cartesian3.fromDegrees(
         longitude,
         latitude,
         height * heightScale
       );
 
       //WebGL Globe only contains lines, so that's the only graphics we create.
-      var polyline = new PolylineGraphics();
+      let polyline = new PolylineGraphics();
       polyline.material = new ColorMaterialProperty(color);
       polyline.width = new ConstantProperty(2);
       polyline.arcType = new ConstantProperty(
@@ -325,7 +325,7 @@ WebGLGlobeDataSource.prototype.load = function (data) {
       ]);
 
       //The polyline instance itself needs to be on an entity.
-      var entity = new Entity({
+      let entity = new Entity({
         id: seriesName + " index " + i.toString(),
         show: show,
         polyline: polyline,

@@ -1,6 +1,6 @@
 import windyGlobe from './windyGlobe';
 import Windy from './Windy';
-const { windConfig } = require('./.setting.js');
+const { windConfig } = require('../Layer/.setting.js');
 
 export default class WindyContainer {
     constructor(props) {
